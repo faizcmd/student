@@ -8,25 +8,26 @@ error_reporting(E_ALL);
 
 use Razorpay\Api\Api;
 
+// Initialize Razorpay
 $api = new Api($keyId, $keySecret);
 
-// 1. Fetch school details
-$school_id = 2;
+// ✅ Step 1: Get the most recently added school (where fund account is not yet created)
+$schoolQuery = $conn->query("SELECT * FROM schools WHERE contact_id IS NULL AND fund_account_id IS NULL ORDER BY id DESC LIMIT 1");
 
-$schoolQuery = $conn->prepare("SELECT * FROM schools WHERE id = ?");
-$schoolQuery->bind_param("i", $school_id);
-$schoolQuery->execute();
-$result = $schoolQuery->get_result();
-$school = $result->fetch_assoc();
-
-if (!$school) {
-    die("School not found.");
+if ($schoolQuery->num_rows === 0) {
+    die("❌ No new school found that requires a fund account.");
 }
 
-// 2. Create Contact
+$school = $schoolQuery->fetch_assoc();
+$school_id = $school['id'];
+
+// ✅ Step 2: Sanitize account name to avoid Razorpay error
+$sanitized_account_name = preg_replace("/[^a-zA-Z0-9 .'-]/", "", $school['account_name']);
+
 try {
+    // ✅ Step 3: Create Razorpay Contact
     $contactData = [
-        'name' => $school['account_name'],
+        'name' => $sanitized_account_name,
         'type' => 'vendor',
         'reference_id' => 'school_' . $school_id,
         'notes' => [
@@ -37,7 +38,7 @@ try {
     $contact = $api->request->request('POST', '/contacts', $contactData);
     $contact_id = $contact['id'];
 
-    // 3. Create Fund Account
+    // ✅ Step 4: Create Razorpay Fund Account
     $fundAccountData = [
         'contact_id' => $contact_id,
         'account_type' => 'vpa',
@@ -49,7 +50,7 @@ try {
     $fundAccount = $api->request->request('POST', '/fund_accounts', $fundAccountData);
     $fund_account_id = $fundAccount['id'];
 
-    // 4. Save to DB
+    // ✅ Step 5: Update DB
     $update = $conn->prepare("UPDATE schools SET contact_id = ?, fund_account_id = ? WHERE id = ?");
     $update->bind_param("ssi", $contact_id, $fund_account_id, $school_id);
     $update->execute();
@@ -57,6 +58,6 @@ try {
     echo "✅ Fund account created and saved for school: " . $school['school_name'];
 
 } catch (Exception $e) {
-    echo "❌ Error: " . $e->getMessage();
+    echo "❌ Razorpay Error: " . $e->getMessage();
 }
 ?>

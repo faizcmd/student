@@ -40,7 +40,7 @@ var options = {
     "key": "<?= $keyId ?>", // Razorpay Key ID
     "amount": "<?= $amount_paise ?>",
     "currency": "INR",
-    "name": "EduHelp Donation",
+    "name": "<?= $student_name ?>",
     "description": "Fee Payment for <?= $student_name ?>",
     "image": "https://yourdomain.com/logo.png",
     "order_id": "<?= $order_id ?>",
@@ -57,6 +57,12 @@ var options = {
     },
     "theme": {
         "color": "#3399cc"
+    },
+    "modal": {
+        "ondismiss": function(){
+            // Redirect to donor_view.php when the modal is closed
+            window.location.href = "donor_view.php";
+        }
     }
 };
 var rzp1 = new Razorpay(options);

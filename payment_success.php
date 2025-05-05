@@ -43,16 +43,17 @@ if ($student_id) {
         <div class="row justify-content-center">
             <div class="col-md-6 success-box text-center">
                 <div class="emoji text-success">🎉</div>
-                <h1 class="text-success mt-3">Thank You, <?= $student_name ?>!</h1>
+                <h1 class="text-success mt-3">Thank You, For supporting <?= $student_name ?>!</h1>
+                <br>
                 <p>Your payment was successful.</p>
-                <p>Please confirm it with your college. Remember us in dua 🙏</p>
+                
 
                 <!-- Displaying Transaction Details -->
                 <h5>Transaction Details:</h5>
                 <p><strong>Payment ID:</strong> <?= htmlspecialchars($payment_id) ?></p>
                 <p><strong>Order ID:</strong> <?= htmlspecialchars($order_id) ?></p>
                 <p><strong>Fee Amount:</strong> ₹<?= htmlspecialchars($fee_amount) ?></p>
-
+                <p>Dear Angel May God Bless You 🙏</p>
                 <a href="donor_view.php" class="btn btn-primary mt-3">⬅ Back to Donation Page</a>
             </div>
         </div>
