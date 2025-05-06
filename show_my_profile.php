@@ -95,17 +95,17 @@ $user = $result->fetch_assoc();
 <div class="top-nav">
     <div class="title">🎓 EduHelp Dashboard</div>
     <div class="nav-links">
-    <a href="scholarShipForm.php"> 🏠 Dashboard </a>
+        <a href="scholarShipForm.php"> 🏠 Dashboard </a>
         <a href="donor_view.php">🙏 Donor View</a>
         <a href="login.php">🔑 Login</a>
         <a href="logout.php" style="color: #dc3545;">🔓 Logout</a>
     </div>
 </div>
 
-<div class="container my-5 ">
+<div class="container my-5">
     <h2 class="text-center mb-4, mt-3 ;">Welcome, <?= htmlspecialchars($user['name']) ?>!</h2>
 
-    <div class="card shadow, mt-3">
+    <div class="card shadow mt-3">
         <div class="card-header bg-primary text-white">
             My Profile
         </div>
@@ -117,38 +117,33 @@ $user = $result->fetch_assoc();
             <p><strong>Zakat Eligible:</strong> <?= htmlspecialchars($user['zakat']) ?></p>
             <p><strong>Fee Amount:</strong> ₹<?= htmlspecialchars($user['fee_amount']) ?></p>
             <p><strong>Aadhaar Number:</strong> <?= htmlspecialchars($user['aadhaar_number']) ?></p>
-
+            <p><strong>Gender:</strong> <?= htmlspecialchars($user['gender']) ?></p> <!-- Added Gender -->
+            
             <!-- Scholarship form section -->
-<hr>
-<h5 class="mt-4">Scholarship Form</h5>
-<div class="d-flex justify-content-between align-items-center mt-3">
-    <div>
-        <?php if (empty($user['form_path'])): ?>
-            <div class="alert alert-warning mb-0">
-                <strong>Action Needed:</strong> Please upload your filled and stamped scholarship form 
-                <a href="scholarShipForm.php" class="btn btn-sm btn-outline-primary ms-2">Upload Form</a>
+            <hr>
+            <h5 class="mt-4">Scholarship Form</h5>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div>
+                    <?php if (empty($user['form_path'])): ?>
+                        <div class="alert alert-warning mb-0">
+                            <strong>Action Needed:</strong> Please upload your filled and stamped scholarship form 
+                            <a href="scholarShipForm.php" class="btn btn-sm btn-outline-primary ms-2">Upload Form</a>
+                        </div>
+                    <?php else: ?>
+                        <p class="mb-0">
+                            <strong>Form Uploaded:</strong> 
+                            <a href="<?= htmlspecialchars($user['form_path']) ?>" target="_blank" class="btn btn-sm btn-success ms-2">View Form</a>
+                        </p>
+                    <?php endif; ?>
+                </div>
+                <div>
+                    <a href="edit_profile.php" class="btn btn-outline-primary">✏️ Edit My Profile</a>
+                </div>
             </div>
-        <?php else: ?>
-            <p class="mb-0">
-                <strong>Form Uploaded:</strong> 
-                <a href="<?= htmlspecialchars($user['form_path']) ?>" target="_blank" class="btn btn-sm btn-success ms-2">View Form</a>
-            </p>
-        <?php endif; ?>
-    </div>
-    <div>
-        <a href="edit_profile.php" class="btn btn-outline-primary ">✏️ Edit My Profile</a>
+        </div>
     </div>
 </div>
 
-    
-    <!-- <div class="mt-4 d-flex gap-3 flex-wrap">
-        <a href="donor_view.php" class="btn btn-secondary">Go to Donor View</a>
-        <a href="scholarShipForm.php" class="btn btn-primary">Dashboard</a>
-        <form action="logout.php" method="POST" style="display:inline-block;">
-            <button type="submit" class="btn btn-danger">Logout</button>
-        </form>
-    </div> -->
-</div>
 <!-- Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>

@@ -152,12 +152,23 @@ while ($row = $result->fetch_assoc()) {
         margin:auto;
     }
 
-    .search-form, .sort-form { 
+    .search-form{ 
         margin-bottom: 20px; 
         display: flex; 
         justify-content: center; 
         gap: 10px; 
         flex-wrap: wrap; 
+        
+        
+    }
+     .sort-form { 
+        margin-bottom: 20px; 
+        display: flex; 
+        justify-content: center; 
+        gap: 10px; 
+        flex-wrap: wrap; 
+        
+        
     }
 
     .search-form input, .sort-form select { 
@@ -166,6 +177,7 @@ while ($row = $result->fetch_assoc()) {
         border-radius: 5px; 
         border: 1px solid #ccc; 
         margin-left: 10px; 
+        
     }
 
     .student-card { 
@@ -188,6 +200,7 @@ while ($row = $result->fetch_assoc()) {
     input[type="submit"], .btn {
         padding: 10px 20px; 
         background: #009688; 
+        
         color: white; 
         border: none; 
         border-radius: 5px;
@@ -278,7 +291,7 @@ while ($row = $result->fetch_assoc()) {
         position: sticky;
         top: 60px; 
         margin-top: 70px; 
-        background: #fff;
+        /* background: #fff; */
         z-index: 999;
         padding: 10px 20px;
         display: flex;
@@ -286,7 +299,7 @@ while ($row = $result->fetch_assoc()) {
         align-items: center;
         flex-wrap: wrap;
         gap: 10px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        /* box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); */
         margin-bottom: 20px;
     }
 
@@ -294,6 +307,7 @@ while ($row = $result->fetch_assoc()) {
         display: flex;
         gap: 10px;
         flex-wrap: wrap;
+       
     }
 
     .search-form input[type="text"] {
@@ -301,6 +315,7 @@ while ($row = $result->fetch_assoc()) {
         border: 1px solid #ccc;
         border-radius: 6px;
         width: 200px;
+        
     }
 
     .search-form input[type="submit"] {
@@ -310,10 +325,12 @@ while ($row = $result->fetch_assoc()) {
         border: none;
         border-radius: 6px;
         cursor: pointer;
+
     }
 
     .sort-form select {
         padding: 8px;
+        
         border-radius: 6px;
         border: 1px solid #ccc;
     }
@@ -323,6 +340,7 @@ while ($row = $result->fetch_assoc()) {
         font-weight: 600;
         color: #333;
         white-space: nowrap;
+        
     }
   </style>
 </head>

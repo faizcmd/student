@@ -11,6 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $mobile         = $_POST['mobile'];
     $password       = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $aadhaar_number = $_POST['aadhaar_number'];
+    // $aadhaar_number = password_hash($_POST['aadhaar_number'], PASSWORD_DEFAULT);
     $gender         = $_POST['gender'];
     $zakat          = $_POST['zakat'] ?? 'No';
     $fee            = $_POST['fee'];
@@ -21,16 +22,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $otp_mobile = rand(100000, 999999);
     $ip_address = $_SERVER['REMOTE_ADDR'];
 
-    // Check for duplicate email or mobile
-    $check = $conn->prepare("SELECT id FROM students WHERE email = ? OR mobile = ?");
-    $check->bind_param("ss", $email, $mobile);
-    $check->execute();
-    $check->store_result();
+    // Check for duplicate email, mobile, or aadhaar
+$check = $conn->prepare("SELECT id FROM students WHERE email = ? OR mobile = ? OR aadhaar_number = ?");
+$check->bind_param("sss", $email, $mobile, $aadhaar_number);
+$check->execute();
+$check->store_result();
 
-    if ($check->num_rows > 0) {
-        echo "<script>alert('Email or mobile already registered.'); window.history.back();</script>";
-        exit();
-    }
+if ($check->num_rows > 0) {
+    echo "<script>alert('Email, mobile number, or Aadhaar number already registered.'); window.history.back();</script>";
+    exit();
+}
+
+
+    // // Check for duplicate email or mobile
+    // $check = $conn->prepare("SELECT id FROM students WHERE email = ? OR mobile = ?");
+    // $check->bind_param("ss", $email, $mobile);
+    // $check->execute();
+    // $check->store_result();
+
+    // if ($check->num_rows > 0) {
+    //     echo "<script>alert('Email or mobile already registered.'); window.history.back();</script>";
+    //     exit();
+    // }
 
     // Insert student record
     $stmt = $conn->prepare("INSERT INTO students 
@@ -48,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $smsSent   = sendSMSOTP($mobile, $otp_mobile);
 
         if ($emailSent && $smsSent) {
-            header("Location: otp_verification.php");
+            header("Location: login.php");
             exit();
         } else {
             echo "<script>alert('Failed to send OTPs.'); window.history.back();</script>";
@@ -141,7 +154,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="nav-links">
         <!-- <a href="scholarShipForm.php">🏠 Dashboard</a> -->
         <a href="donor_view.php">🙏 Donor View</a>
-       <a href="Login.php">🔐 Login</a>
+       <a href="login.php">🔐 Login</a>
         </div>
 </div>
 
@@ -149,9 +162,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <div class="row justify-content-center">
     <div class="col-md-6 col-12">
       <form method="post" action="register.php" class="form-container needs-validation" novalidate>
-        <!-- <div class="form-header">
-          <h2>Student Registration</h2>
-        </div> -->
+        
 
         <div class="mb-3">
           <label for="name" class="form-label">Full Name</label>

@@ -55,10 +55,18 @@ header("refresh:3;url=login.php");
 
             <?php if (isset($email)): ?>
                 <form method="POST">
-                    <div class="form-group">
-                        <label>New Password</label>
-                        <input type="password" name="password" class="form-control" required>
-                    </div>
+                <div class="form-group">
+    <label>New Password</label>
+    <div class="input-group">
+        <input type="password" name="password" id="password" class="form-control" required>
+        <div class="input-group-append">
+            <span class="input-group-text" onclick="togglePassword()" style="cursor:pointer;">
+                👁️
+            </span>
+        </div>
+    </div>
+</div>
+
                     <button type="submit" class="btn btn-success btn-block">Reset Password</button>
                 </form>
             <?php else: ?>
@@ -67,6 +75,15 @@ header("refresh:3;url=login.php");
         </div>
     </div>
 </div>
+
+<script>
+function togglePassword() {
+    const passwordField = document.getElementById("password");
+    const type = passwordField.type === "password" ? "text" : "password";
+    passwordField.type = type;
+}
+</script>
+
 </body>
 </html>
 

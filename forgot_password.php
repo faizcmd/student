@@ -37,9 +37,9 @@
 .top-nav .nav-links a:hover {
     color: #0056b3;
 }
-.container{
-    margin-top: 10px;
-}
+/* .container{
+    margin-top: 70px;
+} */
 
 
 
@@ -57,7 +57,8 @@
         </div>
 </div>
 
-<div class="container mt-5" style="max-width: 500px;">
+<div class="container" style="max-width: 500px; margin-top: 80px;">
+
     <div class="card shadow" >
         <!-- <div class="card-header bg-primary text-white" style="margin-top: 10px;">
             <h4 class="mb-0">Forgot Password</h4>

@@ -17,21 +17,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'];
 
     // Query for user
-    // $stmt = $conn->prepare("SELECT * FROM users WHERE email = ? AND is_verified = 1");
-    $stmt = $conn->prepare("SELECT * FROM students WHERE email = ? And is_verified=1");
+    // $stmt = $conn->prepare("SELECT * FROM students WHERE email = ? AND is_verified = 1");
+    $stmt = $conn->prepare("SELECT * FROM students WHERE email = ? ");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
     $user = $result->fetch_assoc();
 
+    
+
     if ($user && password_verify($password, $user['password'])) {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['user_name'] = $user['name'];
-        header("Location: scholarShipForm.php");
+        $_SESSION['email'] = $user['email'];
+$_SESSION['mobile'] = $user['mobile'];
+    
+        if ($user['is_verified'] == 1) {
+            header("Location: scholarShipForm.php");
+        } else {
+            header("Location: otp_verification.php?verify=0");
+        }
         exit();
     } else {
-        $errorMsg = "Invalid email or password, or account not verified.";
+        $errorMsg = "Invalid email or password.";
     }
+        
 }
 ?>
 
@@ -141,6 +151,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <div class="top-nav">
     <div class="title">🎓 EduHelp</div>
     <div class="nav-links">
+    
         <a href="scholarShipForm.php">🏠 Dashboard</a>
         <a href="donor_view.php">🙏 Donor View</a>
        <a href="register.php">🔐 Sign Up</a>
@@ -151,11 +162,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="row justify-content-center">
         <div class="col-md-6">
             <form action="login.php" method="POST" class="login-form">
-                <!-- <div class="form-header">
-                    <h2>Login</h2>
-                </div> -->
-
-                <!-- Success message after registration -->
+               
+<!-- Success message after registration -->
                 <?php if (isset($justRegistered) && $justRegistered): ?>
                     <div class="alert alert-success mt-3">Registration successful. Please login.</div>
                 <?php endif; ?>
@@ -168,7 +176,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <!-- Email -->
                 <div class="form-group mt-3">
                     <label for="email">Email</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Email" required value="<?= isset($email) ? htmlspecialchars($email) : '' ?>">
+
+                    <!-- <input type="email" class="form-control" id="email" name="email" placeholder="Email" required> -->
                 </div>
 
                 <!-- Password -->

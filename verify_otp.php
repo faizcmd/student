@@ -1,53 +1,36 @@
-<?php 
-session_start();  // Start a session
+<?php
+session_start();
+include 'db_connect.php';
 
-include 'db_connect.php'; // Make sure this sets $conn
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+if (!isset($_SESSION['email']) || !isset($_SESSION['mobile'])) {
+    header("Location: register.php");
+    exit();
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $otp_email = $_POST['otp_email'];
-    $otp_mobile = $_POST['otp_mobile'];
+$email = $_SESSION['email'];
+$mobile = $_SESSION['mobile'];
+$otp_email_input = $_POST['otp_email'];
+$otp_mobile_input = $_POST['otp_mobile'];
 
-    // Check OTPs
-    $stmt = $conn->prepare("SELECT * FROM students WHERE otp_email = ? AND otp_mobile = ?");
-    if ($stmt === false) {
-        die("Prepare failed (SELECT): " . $conn->error);
-    }
+$stmt = $conn->prepare("SELECT id, otp_email, otp_mobile FROM students WHERE email = ? AND mobile = ?");
+$stmt->bind_param("ss", $email, $mobile);
+$stmt->execute();
+$result = $stmt->get_result();
 
-    $stmt->bind_param("ss", $otp_email, $otp_mobile);
-    $stmt->execute();
-    $result = $stmt->get_result();
+if ($row = $result->fetch_assoc()) {
+    if ($row['otp_email'] == $otp_email_input && $row['otp_mobile'] == $otp_mobile_input) {
+        // Mark student as verified
+        $update = $conn->prepare("UPDATE students SET is_verified = 1 WHERE id = ?");
+        $update->bind_param("i", $row['id']);
+        $update->execute();
 
-    if ($result && $result->num_rows > 0) {
-        $user = $result->fetch_assoc();
+        unset($_SESSION['email'], $_SESSION['mobile']); // clear session
 
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['user_name'] = $user['name'];
-        $_SESSION['is_verified'] = 1;
-
-        // Mark as verified
-        $stmt = $conn->prepare("UPDATE students SET is_verified = 1 WHERE id = ?");
-        if ($stmt === false) {
-            die("Prepare failed (UPDATE): " . $conn->error);
-        }
-
-        $stmt->bind_param("i", $user['id']);
-        $stmt->execute();
-
-        echo "<script>
-            alert('OTP verified successfully! You can now log in.');
-            window.location.href = 'login.php';
-        </script>";
-        exit();
+        echo "<script>alert('OTP verified successfully.'); window.location.href='login.php';</script>";
     } else {
-        echo "<script>
-            alert('Invalid OTPs. Please try again.');
-            window.history.back();
-        </script>";
-        exit();
+        echo "<script>alert('Invalid OTPs. Please try again.'); window.location.href='otp_verification.php';</script>";
     }
+} else {
+    echo "<script>alert('Student record not found.'); window.location.href='register.php';</script>";
 }
 ?>
