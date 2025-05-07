@@ -1,4 +1,4 @@
-<?php 
+<?php  
 session_start();
 
 // Database connection
@@ -45,7 +45,7 @@ $_SESSION['mobile'] = $user['mobile'];
 }
 ?>
 
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -56,66 +56,71 @@ $_SESSION['mobile'] = $user['mobile'];
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome for eye icon -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
 
     <style>
-         body { background-color: #f8f9fa; }
+        body { background-color: #f8f9fa; }
 
-.top-nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background-color: #ffffff;
-    border-bottom: 1px solid #dee2e6;
-    padding: 10px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 1000;
-}
-
-.top-nav .title {
-    font-weight: bold;
-    font-size: 1.2rem;
-}
-
-.top-nav .nav-links a {
-    margin-left: 15px;
-    font-size: 1rem;
-    text-decoration: none;
-    color: #007bff;
-}
-
-.top-nav .nav-links a:hover {
-    color: #0056b3;
-}
-
-.container {
-    margin-top: 50px;
-    max-width: 700px;
-}
-
-.info-card {
-    border: 1px solid #dee2e6;
-    background: #fff;
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 20px;
-}
-
-.info-card p {
-    margin-bottom: 5px;
-}
-        body {
-            background-color: #f8f9fa;
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #ffffff;
+            border-bottom: 1px solid #dee2e6;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
         }
+
+        .top-nav .title {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .top-nav .nav-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .top-nav .nav-links a {
+            font-size: 1rem;
+            text-decoration: none;
+            color: #006400;
+        }
+
+        .top-nav .nav-links a:hover {
+            color: #006400;
+        }
+
+        @media (max-width: 768px) {
+      .top-nav .nav-links {
+        display: none;
+      }
+      .top-nav .hamburger {
+        display: block;
+        cursor: pointer;
+      }
+    }
+    @media (min-width: 769px) {
+      .top-nav .hamburger {
+        display: none;
+      }
+    }
+        .container {
+            margin-top: 80px;
+            max-width: 700px;
+        }
+
         .login-form {
             background-color: white;
             border-radius: 8px;
             padding: 30px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-top: 50px;
         }
+
         .form-header {
             background-color: #28a745;
             color: white;
@@ -123,23 +128,28 @@ $_SESSION['mobile'] = $user['mobile'];
             border-radius: 8px 8px 0 0;
             text-align: center;
         }
+
         .form-footer {
             margin-top: 20px;
             text-align: center;
         }
+
         .btn-login {
-            background-color: #28a745;
-            border-color: #28a745;
+            background-color: #006400 !important; /* Dark green */
+    border-color: #006400 !important;
             color: white;
         }
+
         .btn-login:hover {
-            background-color: #218838;
-            border-color: #1e7e34;
+            background-color: #006400 !important; /* Dark green */
+    border-color: #006400 !important;
         }
+
         .input-group-text {
             background-color: #fff;
             border-left: none;
         }
+
         .form-control {
             border-right: none;
         }
@@ -150,20 +160,32 @@ $_SESSION['mobile'] = $user['mobile'];
 <!-- Top Navigation Bar -->
 <div class="top-nav">
     <div class="title">🎓 EduHelp</div>
-    <div class="nav-links">
-    
+
+    <div class="nav-links" id="navLinks">
         <a href="scholarShipForm.php">🏠 Dashboard</a>
         <a href="donor_view.php">🙏 Donor View</a>
-       <a href="register.php">🔐 Sign Up</a>
-        </div>
+        <a href="register.php">🔐 Sign Up</a>
+    </div>
+
+    <div class="hamburger" id="hamburger" onclick="toggleMenu()">☰</div>
+    <!-- <div class="hamburger" onclick="toggleMenu()">☰</div> -->
 </div>
+
+<script>
+  function toggleMenu() {
+    const nav = document.getElementById("navLinks");
+    nav.style.display = nav.style.display === "flex" ? "none" : "flex";
+    nav.style.flexDirection = "column";
+    nav.style.gap = "10px";
+  }
+</script>
 
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6">
             <form action="login.php" method="POST" class="login-form">
                
-<!-- Success message after registration -->
+                <!-- Success message after registration -->
                 <?php if (isset($justRegistered) && $justRegistered): ?>
                     <div class="alert alert-success mt-3">Registration successful. Please login.</div>
                 <?php endif; ?>
@@ -177,8 +199,6 @@ $_SESSION['mobile'] = $user['mobile'];
                 <div class="form-group mt-3">
                     <label for="email">Email</label>
                     <input type="email" class="form-control" id="email" name="email" placeholder="Email" required value="<?= isset($email) ? htmlspecialchars($email) : '' ?>">
-
-                    <!-- <input type="email" class="form-control" id="email" name="email" placeholder="Email" required> -->
                 </div>
 
                 <!-- Password -->
@@ -199,8 +219,6 @@ $_SESSION['mobile'] = $user['mobile'];
 
                 <!-- Links -->
                 <div class="form-footer">
-                    <!-- <p>Don't have an account? <a href="register.php">Sign Up here</a></p> -->
-                    <!-- <p>Or <a href="donor_view.php">Visit Donor View</a></p> -->
                     <p><a href="forgot_password.php">Forgot Password?</a></p>
                 </div>
             </form>

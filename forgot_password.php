@@ -31,18 +31,30 @@
     margin-left: 15px;
     font-size: 1rem;
     text-decoration: none;
-    color: #007bff;
+    color: #006400;
 }
 
 .top-nav .nav-links a:hover {
-    color: #0056b3;
+    color: #006400;
 }
 /* .container{
     margin-top: 70px;
 } */
 
-
-
+@media (max-width: 768px) {
+      .top-nav .nav-links {
+        display: none;
+      }
+      .top-nav .hamburger {
+        display: block;
+        cursor: pointer;
+      }
+    }
+    @media (min-width: 769px) {
+      .top-nav .hamburger {
+        display: none;
+      }
+    }
 
     </style>
 </head>

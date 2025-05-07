@@ -98,10 +98,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .top-nav .nav-links a {
             margin-left: 15px;
             text-decoration: none;
-            color: #007bff;
+            color: #006400;
         }
         .top-nav .nav-links a:hover {
-            color: #0056b3;
+            color: #006400;
         }
         .form-container {
             max-width: 700px;
@@ -111,20 +111,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border-radius: 12px;
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
         }
+
+        @media (max-width: 768px) {
+      .top-nav .nav-links {
+        display: none;
+      }
+      .top-nav .hamburger {
+        display: block;
+        cursor: pointer;
+      }
+    }
+    @media (min-width: 769px) {
+      .top-nav .hamburger {
+        display: none;
+      }
+    }
+
     </style>
 </head>
 <body>
 
 <div class="top-nav">
     <div class="title">🎓 EduHelp Dashboard</div>
-    <div class="nav-links">
+    <div class="nav-links" id="navLinks">
         <a href="scholarShipForm.php">🏠 Dashboard</a>
         <a href="donor_view.php">🙏 Donor View</a>
         <a href="login.php">🔑 Login</a>
         <a href="logout.php" style="color: #dc3545;">🔓 Logout</a>
     </div>
+    <div class="hamburger" id="hamburger" onclick="toggleMenu()">☰</div>
+    <!-- <div class="hamburger" onclick="toggleMenu()">☰</div> -->
 </div>
 
+<script>
+  function toggleMenu() {
+    const nav = document.getElementById("navLinks");
+    nav.style.display = nav.style.display === "flex" ? "none" : "flex";
+    nav.style.flexDirection = "column";
+    nav.style.gap = "10px";
+  }
+</script>
 <div class="container mt-5">
     <div class="form-container">
         <h2 class="mb-4">Edit Profile</h2>
@@ -196,7 +222,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
 
             <button type="submit" class="btn btn-primary">💾 Save Changes</button>
-            <a href="upload_form.php" class="btn btn-secondary">Back</a>
+            <a href="show_my_profile.php" class="btn btn-secondary"> Show My Profile</a>
         </form>
     </div>
 </div>

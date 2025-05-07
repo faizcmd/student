@@ -10,8 +10,11 @@ if (!isset($_SESSION['user_id'])) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>User Dashboard</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
     <style>
         body {
             background-color: #f2f4f6;
@@ -66,11 +69,27 @@ if (!isset($_SESSION['user_id'])) {
             margin-left: 15px;
             font-size: 1rem;
             text-decoration: none;
-            color: #007bff;
+            color: #006400;
         }
         .top-nav .nav-links a:hover {
-            color: #0056b3;
+            color: #006400;
         }
+
+        @media (max-width: 768px) {
+      .top-nav .nav-links {
+        display: none;
+      }
+      .top-nav .hamburger {
+        display: block;
+        cursor: pointer;
+      }
+    }
+    @media (min-width: 769px) {
+      .top-nav .hamburger {
+        display: none;
+      }
+    }
+
     </style>
 </head>
 <body>
@@ -78,12 +97,26 @@ if (!isset($_SESSION['user_id'])) {
 <!-- Top Navigation Bar -->
 <div class="top-nav">
     <div class="title">🎓 EduHelp Dashboard</div>
-    <div class="nav-links">
+
+    <div class="nav-links" id="navLinks">
         <a href="donor_view.php">🙏 Donor View</a>
         <a href="show_my_profile.php">🧾 Show My Profile</a>
         <a href="logout.php" style="color: #dc3545;">🔓 Logout</a>
     </div>
+
+    <div class="hamburger" id="hamburger" onclick="toggleMenu()">☰</div>
+    <!-- <div class="hamburger" onclick="toggleMenu()">☰</div> -->
 </div>
+
+<script>
+  function toggleMenu() {
+    const nav = document.getElementById("navLinks");
+    nav.style.display = nav.style.display === "flex" ? "none" : "flex";
+    nav.style.flexDirection = "column";
+    nav.style.gap = "10px";
+  }
+</script>
+
 
 <div class="container">
     <div class="row justify-content-center">

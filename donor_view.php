@@ -130,11 +130,11 @@ while ($row = $result->fetch_assoc()) {
         margin-left: 15px;
         font-size: 1rem;
         text-decoration: none;
-        color: #007bff;
+        color: #006400;
     }
 
     .top-nav .nav-links a:hover {
-        color: #0056b3;
+        color: #006400;
     }
 
     * { 
@@ -342,6 +342,21 @@ while ($row = $result->fetch_assoc()) {
         white-space: nowrap;
         
     }
+
+    @media (max-width: 768px) {
+      .top-nav .nav-links {
+        display: none;
+      }
+      .top-nav .hamburger {
+        display: block;
+        cursor: pointer;
+      }
+    }
+    @media (min-width: 769px) {
+      .top-nav .hamburger {
+        display: none;
+      }
+    }
   </style>
 </head>
 
@@ -349,12 +364,23 @@ while ($row = $result->fetch_assoc()) {
   <!-- Top Navigation Bar -->
   <div class="top-nav">
     <div class="title">🎓 EduHelp Dashboard</div>
-    <div class="nav-links">
+    <div class="nav-links" id="navLinks">
         <a href="scholarShipForm.php">🏠 Dashboard</a>
         <a href="register.php">🔑 Register</a>
         <a href="logout.php" style="color: #dc3545;">🔓 Logout</a>
     </div>
-  </div>
+    <div class="hamburger" id="hamburger" onclick="toggleMenu()">☰</div>
+    <!-- <div class="hamburger" onclick="toggleMenu()">☰</div> -->
+</div>
+
+<script>
+  function toggleMenu() {
+    const nav = document.getElementById("navLinks");
+    nav.style.display = nav.style.display === "flex" ? "none" : "flex";
+    nav.style.flexDirection = "column";
+    nav.style.gap = "10px";
+  }
+</script>
 
   <div class="container">
   <div class="search-bar-wrapper">

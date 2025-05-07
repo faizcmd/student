@@ -40,11 +40,11 @@ session_start();
       margin-left: 15px;
       font-size: 1rem;
       text-decoration: none;
-      color: #007bff;
+      color: #006400;
     }
 
     .top-nav .nav-links a:hover {
-      color: #0056b3;
+      color: #006400;
     }
   </style>
 </head>

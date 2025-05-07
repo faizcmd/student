@@ -82,11 +82,27 @@ $user = $result->fetch_assoc();
             margin-left: 15px;
             font-size: 1rem;
             text-decoration: none;
-            color: #007bff;
+            color: #006400;
         }
         .top-nav .nav-links a:hover {
-            color: #0056b3;
+            color: #006400;
         }
+
+        @media (max-width: 768px) {
+      .top-nav .nav-links {
+        display: none;
+      }
+      .top-nav .hamburger {
+        display: block;
+        cursor: pointer;
+      }
+    }
+    @media (min-width: 769px) {
+      .top-nav .hamburger {
+        display: none;
+      }
+    }
+
     </style>
 </head>
 <body>
@@ -94,13 +110,25 @@ $user = $result->fetch_assoc();
 <!-- Top Navigation Bar -->
 <div class="top-nav">
     <div class="title">🎓 EduHelp Dashboard</div>
-    <div class="nav-links">
+    <div class="nav-links" id="navLinks">
         <a href="scholarShipForm.php"> 🏠 Dashboard </a>
         <a href="donor_view.php">🙏 Donor View</a>
         <a href="login.php">🔑 Login</a>
         <a href="logout.php" style="color: #dc3545;">🔓 Logout</a>
     </div>
+
+    <div class="hamburger" id="hamburger" onclick="toggleMenu()">☰</div>
+    <!-- <div class="hamburger" onclick="toggleMenu()">☰</div> -->
 </div>
+
+<script>
+  function toggleMenu() {
+    const nav = document.getElementById("navLinks");
+    nav.style.display = nav.style.display === "flex" ? "none" : "flex";
+    nav.style.flexDirection = "column";
+    nav.style.gap = "10px";
+  }
+</script>
 
 <div class="container my-5">
     <h2 class="text-center mb-4, mt-3 ;">Welcome, <?= htmlspecialchars($user['name']) ?>!</h2>

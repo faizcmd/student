@@ -88,10 +88,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES['scholarship_form'])) 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>EduHelp - Upload Form</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
         body { background-color: #f8f9fa; }
 
@@ -118,11 +122,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES['scholarship_form'])) 
             margin-left: 15px;
             font-size: 1rem;
             text-decoration: none;
-            color: #007bff;
+            color: #006400;
         }
 
         .top-nav .nav-links a:hover {
-            color: #0056b3;
+            color: #006400;
         }
 
         .container {
@@ -141,6 +145,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES['scholarship_form'])) 
         .info-card p {
             margin-bottom: 5px;
         }
+
+        @media (max-width: 768px) {
+      .top-nav .nav-links {
+        display: none;
+      }
+      .top-nav .hamburger {
+        display: block;
+        cursor: pointer;
+      }
+    }
+    @media (min-width: 769px) {
+      .top-nav .hamburger {
+        display: none;
+      }
+    }
+
+
     </style>
 </head>
 <body>
@@ -148,7 +169,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES['scholarship_form'])) 
 <!-- Top Navigation Bar -->
 <div class="top-nav">
     <div class="title">🎓 EduHelp</div>
-    <div class="nav-links">
+
+    <div class="nav-links" id="navLinks">
         <a href="scholarShipForm.php">🏠 Dashboard</a>
         <a href="donor_view.php">🙏 Donor View</a>
         <?php if ($isLoggedIn): ?>
@@ -157,6 +179,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES['scholarship_form'])) 
             <a href="login.php">🔐 Login</a>
         <?php endif; ?>
     </div>
+    <div class="hamburger" id="hamburger" onclick="toggleMenu()">☰</div>
+    <!-- <div class="hamburger" onclick="toggleMenu()">☰</div> -->
+</div>
+
+<script>
+  function toggleMenu() {
+    const nav = document.getElementById("navLinks");
+    nav.style.display = nav.style.display === "flex" ? "none" : "flex";
+    nav.style.flexDirection = "column";
+    nav.style.gap = "10px";
+  }
+</script>
+
 </div>
 
 <div class="container">
