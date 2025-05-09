@@ -29,24 +29,30 @@ if (isset($_POST['school_name'], $_POST['account_name'], $_POST['account_number'
             try {
                 $api = new Api($keyId, $keySecret); // Initialize Razorpay API
 
-                // Correct way to create a contact
-                $contact = $api->customer->create([
+                // Create contact using the correct API endpoint
+                $contactData = [
                     'name' => $account_name,
-                    'email' => 'contact@example.com',  // You can replace this with a valid email
-                    'contact' => '1234567890',         // You can replace this with a valid contact number
+                    'type' => 'vendor',
                     'reference_id' => 'school_' . $school_id,
-                    'notes' => ['school_name' => $school_name]
-                ]);
+                    'notes' => [
+                        'school_name' => $school_name
+                    ]
+                ];
 
-                $contact_id = $contact['id']; // Store the contact ID
+                $contact = $api->request->request('POST', '/contacts', $contactData);
+                $contact_id = $contact['id'];
 
                 // Create a Razorpay Fund Account
-                $fundAccount = $api->fund_account->create([
+                $fundAccountData = [
                     'contact_id' => $contact_id,
                     'account_type' => 'vpa',
-                    'vpa' => ['address' => $upi_id]
-                ]);
-                $fund_account_id = $fundAccount['id']; // Store the fund account ID
+                    'vpa' => [
+                        'address' => $upi_id
+                    ]
+                ];
+
+                $fundAccount = $api->request->request('POST', '/fund_accounts', $fundAccountData);
+                $fund_account_id = $fundAccount['id'];
 
                 // Update the DB with Razorpay contact and fund account IDs
                 $update = $conn->prepare("UPDATE schools SET contact_id = ?, fund_account_id = ? WHERE id = ?");

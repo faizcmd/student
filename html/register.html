@@ -83,67 +83,78 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
   document.addEventListener('DOMContentLoaded', function () {
-    const form = document.querySelector('form');
-    const passwordField = document.querySelector('#password');
-    const passwordError = document.querySelector('#passwordError');
+    const fields = Array.from(document.querySelectorAll('input, select')).filter(el => el.name && el.type !== 'hidden');
 
-    // Password validation function
-    function validatePassword() {
-        const password = passwordField.value;
-        const hasLetter = /[A-Za-z]/.test(password);
-        const hasNumber = /\d/.test(password);
-        const hasSpecial = /[@$!%*?&]/.test(password);
-        const isLongEnough = password.length >= 6;
-
-        if (!isLongEnough || !hasLetter || !hasNumber || !hasSpecial) {
-            passwordField.classList.add('is-invalid');
-            passwordField.classList.remove('is-valid');
-            passwordError.style.display = 'block';
-            return false;
-        } else {
-            passwordField.classList.remove('is-invalid');
-            passwordField.classList.add('is-valid');
-            passwordError.style.display = 'none';
-            return true;
-        }
+    // Function to validate and show error for invalid input
+    function validateField(el) {
+      if (!el.checkValidity()) {
+        el.classList.add('is-invalid');
+      } else {
+        el.classList.remove('is-invalid');
+      }
     }
 
-    // Add password validation on input
-    passwordField.addEventListener('input', validatePassword);
-    passwordField.addEventListener('blur', validatePassword);
-
-    // Form submission validation
-    form.addEventListener('submit', function(event) {
-        if (!validatePassword()) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
-        form.classList.add('was-validated');
+    // Handle password input validation explicitly
+    const passwordField = document.querySelector('input[name="password"]'); // Track by ID
+    console.log("abduls")
+    passwordField.addEventListener('input', function () {
+      validateField(passwordField);
     });
 
-    // Password visibility toggle
-    document.querySelector('#togglePassword').addEventListener('click', function() {
-        const type = passwordField.type === 'password' ? 'text' : 'password';
-        passwordField.type = type;
-        this.classList.toggle('bi-eye');
-        this.classList.toggle('bi-eye-slash');
+    // For mobile and Aadhaar, ensure only numbers are allowed
+    document.querySelector('input[name="mobile"]').addEventListener('input', function (e) {
+      // Only allow numeric input and restrict length for mobile
+      this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
+      validateField(this);
+      if (this.value.length === 10) {
+        const nextField = fields[fields.indexOf(this) + 1];
+        if (nextField && nextField.name !== 'email') nextField.focus();  // Avoid focusing email
+      }
     });
 
-    // Other field validations
-    const fields = Array.from(document.querySelectorAll('input, select')).filter(el => el.name && el.type !== 'hidden');
-    
-    fields.forEach((field) => {
-        if (field !== passwordField) {
-            field.addEventListener('input', function() {
-                if (!this.checkValidity()) {
-                    this.classList.add('is-invalid');
-                    this.classList.remove('is-valid');
-                } else {
-                    this.classList.remove('is-invalid');
-                    this.classList.add('is-valid');
-                }
-            });
-        }
+    // For Aadhaar, allow only numbers, limit length to 12 digits
+    document.querySelector('input[name="aadhaar_number"]').addEventListener('input', function (e) {
+      this.value = this.value.replace(/[^0-9]/g, '').slice(0, 12);
+      validateField(this);
+      if (this.value.length === 12) {
+        const nextField = fields[fields.indexOf(this) + 1];
+        if (nextField) nextField.focus();
+      }
+    });
+
+    // For email, validate the format
+    document.querySelector('input[name="email"]').addEventListener('input', function (e) {
+      validateField(this);
+    });
+
+    // For password visibility toggle
+    document.querySelector('#togglePassword').addEventListener('click', function (e) {
+      const passwordField = document.querySelector('input[name="password"]');
+      const type = passwordField.type === 'password' ? 'text' : 'password';
+      passwordField.type = type;
+      this.classList.toggle('bi-eye');
+      this.classList.toggle('bi-eye-slash');
+    });
+
+    // For name and fee fields, move focus on valid input
+    fields.forEach((el, index) => {
+      if (el.name === 'name' || el.name === 'fee' || el.name === 'email') {
+        el.addEventListener('keydown', function (e) {
+          if ((e.key === 'Enter' || e.key === 'Tab') && el.checkValidity()) {
+            e.preventDefault();
+            if (index < fields.length - 1) {
+              fields[index + 1].focus();
+            }
+          }
+        });
+      } else {
+        el.addEventListener('input', function () {
+          validateField(el);
+          if (el.checkValidity() && index < fields.length - 1) {
+            fields[index + 1].focus();
+          }
+        });
+      }
     });
   });
 </script>
@@ -245,18 +256,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
 
         <div class="mb-3"> 
-          <label class="form-label">Password</label>
-          <div class="input-group">
-            <input type="password" class="form-control" name="password" id="password"
-                   pattern="(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}" required>
-            <span class="input-group-text">
-              <i class="bi bi-eye-slash" id="togglePassword" style="cursor: pointer;"></i>
-            </span>
-          </div>
-          <div class="invalid-feedback" id="passwordError">
-            Password must be at least 6 characters and include one letter, one number, and one special character.
-          </div>
-        </div>
+  <label class="form-label">Password</label>
+  <div class="input-group">
+    <input type="password" class="form-control" name="password" id="password"
+       pattern="(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}" required>
+    <span class="input-group-text">
+      <i class="bi bi-eye-slash" id="togglePassword" style="cursor: pointer;"></i>
+    </span>
+    <div class="invalid-feedback">
+      Password must be at least 6 characters and include one letter, one number, and one special character.
+    </div>
+  </div>
+  
+</div>
 
         <div class="mb-3">
           <label class="form-label">Aadhaar Number</label>
@@ -321,45 +333,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           event.stopPropagation();
         }
 
-        // Validate all fields including password
-        const fields = form.querySelectorAll('input, select');
-        fields.forEach(field => {
-          if (!field.checkValidity()) {
-            field.classList.add('is-invalid');
-          } else {
-            field.classList.remove('is-invalid');
-            field.classList.add('is-valid');
-          }
-        });
+        // Validate the password field separately
+        const passwordField = form.querySelector('input[name="password"]');
+        if (passwordField && !passwordField.checkValidity()) {
+          passwordField.classList.add('is-invalid');  // Add invalid class if validation fails
+        }
 
         form.classList.add('was-validated');
       }, false);
-
-      // Add real-time validation for password
-      const passwordField = form.querySelector('#password');
-      if (passwordField) {
-        const passwordError = form.querySelector('#passwordError');
-        function validatePassword() {
-          const password = passwordField.value;
-          const hasLetter = /[A-Za-z]/.test(password);
-          const hasNumber = /\d/.test(password);
-          const hasSpecial = /[@$!%*?&]/.test(password);
-          const isLongEnough = password.length >= 6;
-
-          if (!isLongEnough || !hasLetter || !hasNumber || !hasSpecial) {
-            passwordField.classList.add('is-invalid');
-            passwordField.classList.remove('is-valid');
-            passwordError.style.display = 'block';
-          } else {
-            passwordField.classList.remove('is-invalid');
-            passwordField.classList.add('is-valid');
-            passwordError.style.display = 'none';
-          }
-        }
-
-        passwordField.addEventListener('input', validatePassword);
-        passwordField.addEventListener('blur', validatePassword);
-      }
     });
   })();
 </script>

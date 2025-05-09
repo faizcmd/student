@@ -79,23 +79,99 @@ if (isset($_GET['payment_id']) && isset($_GET['order_id']) && isset($_GET['stude
         */
 
         // Get student's email from the database
-        $stmt = $conn->prepare("SELECT email FROM students WHERE id = ?");
+        $stmt = $conn->prepare("SELECT email, name, fee_amount, school_id FROM students WHERE id = ?");
         $stmt->bind_param("i", $student_id);
         $stmt->execute();
         $result = $stmt->get_result();
         $student = $result->fetch_assoc();
         $student_email = $student['email'];
+        $student_name = $student['name'];
+        $fee_amount = $student['fee_amount'];
 
-        // Send email to the student using PHPMailer
+        // Get school details
+        $stmt = $conn->prepare("SELECT school_name FROM schools WHERE id = ?");
+        $stmt->bind_param("i", $student['school_id']);
+        $stmt->execute();
+        $school_result = $stmt->get_result();
+        $school = $school_result->fetch_assoc();
+        $school_name = $school['school_name'];
+
+        // Send email notification using PHPMailer
         $mail = new PHPMailer(true);
         try {
+            // Server settings
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';  // Replace with your SMTP host
+            $mail->SMTPAuth = true;
+            $mail->Username = 'faizan.ppc@gmail.com'; // Replace with your email
+            $mail->Password = 'vcdv tvmi kkop akgo'; // Replace with your app password
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
+
+            // Recipients
             $mail->setFrom('faizan.ppc@gmail.com', 'EduHelp');
-            $mail->addAddress($student_email, 'Student Name'); // Use student's email
-            $mail->Subject = 'Donation Received';
-            $mail->Body    = 'Dear Student, your donation has been successfully received. Your payment is being processed and will be transferred to the college account. Thank you for your support!';
+            $mail->addAddress($student_email, $student_name);
+
+            // Content
+            $mail->isHTML(true);
+            $mail->Subject = "Fee Payment Confirmation - EduHelp";
+            
+            $mail->Body = "
+            <html>
+            <head>
+                <style>
+                    body { font-family: Arial, sans-serif; line-height: 1.6; }
+                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                    .header { background-color: #006400; color: white; padding: 20px; text-align: center; }
+                    .content { padding: 20px; }
+                    .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; }
+                </style>
+            </head>
+            <body>
+                <div class='container'>
+                    <div class='header'>
+                        <h2>Fee Payment Confirmation</h2>
+                    </div>
+                    <div class='content'>
+                        <p>Dear {$student_name},</p>
+                        <p>We are pleased to inform you that your fee payment has been successfully processed.</p>
+                        <p><strong>Payment Details:</strong></p>
+                        <ul>
+                            <li>Amount Paid: ₹{$fee_amount}</li>
+                            <li>School/College: {$school_name}</li>
+                            <li>Transaction ID: {$payment_id}</li>
+                            <li>Date: " . date('d-m-Y H:i:s') . "</li>
+                        </ul>
+                        <p>Please confirm with your institution that they have received the payment.</p>
+                        <p>If you have any questions, please don't hesitate to contact us.</p>
+                        <p>Best regards,<br>EduHelp Team</p>
+                    </div>
+                    <div class='footer'>
+                        <p>This is an automated message, please do not reply to this email.</p>
+                    </div>
+                </div>
+            </body>
+            </html>";
+
             $mail->send();
+            
+            // Update payment status to include email sent
+            $stmt = $conn->prepare("UPDATE payments SET email_sent = 1 WHERE id = ?");
+            $stmt->bind_param("i", $payment_id);
+            $stmt->execute();
+            
+            // Log successful email
+            error_log("Payment confirmation email sent successfully to: " . $student_email);
+            
         } catch (Exception $e) {
-            echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
+            // Log the error
+            error_log("Failed to send payment confirmation email to: " . $student_email . ". Error: " . $mail->ErrorInfo);
+            
+            // Update payment status to indicate email failure
+            $stmt = $conn->prepare("UPDATE payments SET email_sent = 0, email_error = ? WHERE id = ?");
+            $error_message = $mail->ErrorInfo;
+            $stmt->bind_param("si", $error_message, $payment_id);
+            $stmt->execute();
         }
 
         // Redirect to success page with student_id in URL
